@@ -48,7 +48,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center gap-2 group">
             <span className="text-xl font-bold text-base-content">
-              CommunityEvents
+              Social Events
             </span>
           </Link>
 
