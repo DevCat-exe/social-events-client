@@ -34,7 +34,7 @@ export default function Newsletter() {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-br from-green-600 to-teal-600 text-white">
+    <section className="py-20 bg-linear-to-br from-green-600 to-teal-600 text-white">
       <motion.div
         className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
         variants={containerVariants}

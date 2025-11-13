@@ -22,7 +22,7 @@ const RootLayout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
-      <main className="flex-grow">
+      <main className="grow">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
