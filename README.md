@@ -4,7 +4,7 @@ A modern social events platform built with React and Vite, allowing users to cre
 
 ## Live Site
 
-[Visit CommunityEvents](https://social-development-event-59424.web.app/)
+[Visit CommunityEvents](https://devcat-b12a10.netlify.app/) **SWITCHED TO NETLIFY**
 
 ## Features
 
