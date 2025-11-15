@@ -4,7 +4,7 @@ A modern social events platform built with React and Vite, allowing users to cre
 
 ## Live Site
 
-[Visit CommunityEvents](https://social-development-event-59424.web.app/)
+[Visit CommunityEvents](https://devcat-b12a10.netlify.app/) **SWITCHED TO NETLIFY**
 
 ## Features
 
@@ -23,14 +23,3 @@ A modern social events platform built with React and Vite, allowing users to cre
 - **Authentication**: Firebase Auth
 - **Backend**: Firebase (Firestore for data, Hosting for deployment)
 - **Routing**: React Router
-
-## Getting Started
-
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Set up Firebase configuration in `.env.local`
-4. Run the development server: `npm run dev`
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
