@@ -1,16 +1,36 @@
-# React + Vite
+# CommunityEvents
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern social events platform built with React and Vite, allowing users to create, manage, and join community events seamlessly.
 
-Currently, two official plugins are available:
+## Live Site
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+[Visit CommunityEvents](https://social-development-event-59424.web.app/)
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **User Authentication**: Secure login and registration with email/password or Google OAuth
+- **Event Creation**: Easily create and customize community events with detailed information
+- **Event Management**: Full control over your created events - edit, update, or delete as needed
+- **Event Discovery**: Browse and join upcoming events from the community
+- **Responsive Design**: Optimized for all devices with a clean, modern interface
+- **Dark/Light Theme**: Toggle between themes for personalized user experience
+- **Real-time Updates**: Stay connected with the latest event information and notifications
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Frontend**: React, Vite
+- **Styling**: Tailwind CSS, DaisyUI
+- **Authentication**: Firebase Auth
+- **Backend**: Firebase (Firestore for data, Hosting for deployment)
+- **Routing**: React Router
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Set up Firebase configuration in `.env.local`
+4. Run the development server: `npm run dev`
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.

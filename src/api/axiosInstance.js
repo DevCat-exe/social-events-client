@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'https://social-events-server-five.vercel.app/';
 
 const instance = axios.create({
     baseURL: API_URL,
