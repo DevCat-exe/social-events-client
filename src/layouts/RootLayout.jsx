@@ -20,7 +20,7 @@ const RootLayout = () => {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-base-200">
       <Navbar />
       <main className="grow">
         <AnimatePresence mode="wait">

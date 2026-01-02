@@ -1,43 +1,94 @@
-import { Facebook, Twitter, Instagram, Mail } from "lucide-react";
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-gray-900 text-gray-300 py-12">
+    <footer className="bg-base-300 pt-20 pb-10 text-base-content border-t border-base-content/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-xl font-bold text-white">
-                CommunityEvents
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+          {/* Brand & Newsletter */}
+          <div className="space-y-6">
+            <Link to="/" className="flex items-center gap-2 group w-fit">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-content font-bold text-lg">
+                S
+              </div>
+              <span className="text-xl font-bold tracking-tight">
+                SocialEvents
               </span>
-            </div>
-            <p className="text-sm text-gray-400">
-              Building stronger communities through social development events
+            </Link>
+            <p className="text-sm text-base-content/70 leading-relaxed">
+              Empowering communities through meaningful connections and
+              impactful social development events. Join our mission today.
             </p>
+            <div className="flex gap-3">
+              <a
+                href="#"
+                className="p-2 bg-base-100 rounded-lg hover:bg-primary hover:text-primary-content transition shadow-sm border border-base-content/5"
+              >
+                <Facebook size={18} />
+              </a>
+              <a
+                href="#"
+                className="p-2 bg-base-100 rounded-lg hover:bg-primary hover:text-primary-content transition shadow-sm border border-base-content/5"
+              >
+                <Twitter size={18} />
+              </a>
+              <a
+                href="#"
+                className="p-2 bg-base-100 rounded-lg hover:bg-primary hover:text-primary-content transition shadow-sm border border-base-content/5"
+              >
+                <Instagram size={18} />
+              </a>
+            </div>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-sm">
+            <h4 className="font-bold text-lg mb-6 flex items-center gap-2">
+              <span className="w-1.5 h-6 bg-primary rounded-full"></span>
+              Platform
+            </h4>
+            <ul className="space-y-4 text-sm font-medium">
               <li>
-                <Link to="/" className="hover:text-green-400 transition">
+                <Link
+                  to="/"
+                  className="text-base-content/70 hover:text-primary transition"
+                >
                   Home
                 </Link>
               </li>
               <li>
                 <Link
                   to="/upcoming"
-                  className="hover:text-green-400 transition"
+                  className="text-base-content/70 hover:text-primary transition"
                 >
-                  Upcoming Events
+                  Explore Events
                 </Link>
               </li>
               <li>
-                <Link to="/create" className="hover:text-green-400 transition">
-                  Create Event
+                <Link
+                  to="/blog"
+                  className="text-base-content/70 hover:text-primary transition"
+                >
+                  Our Blog
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/about"
+                  className="text-base-content/70 hover:text-primary transition"
+                >
+                  About Us
                 </Link>
               </li>
             </ul>
@@ -45,57 +96,84 @@ export default function Footer() {
 
           {/* Support */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Support</h4>
-            <ul className="space-y-2 text-sm">
+            <h4 className="font-bold text-lg mb-6 flex items-center gap-2">
+              <span className="w-1.5 h-6 bg-secondary rounded-full"></span>
+              Support
+            </h4>
+            <ul className="space-y-4 text-sm font-medium">
               <li>
-                <a href="#" className="hover:text-green-400 transition">
+                <Link
+                  to="/contact"
+                  className="text-base-content/70 hover:text-primary transition"
+                >
+                  Contact Support
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-base-content/70 hover:text-primary transition"
+                >
                   Help Center
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-green-400 transition">
-                  Contact Us
+                <a
+                  href="#"
+                  className="text-base-content/70 hover:text-primary transition"
+                >
+                  Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-green-400 transition">
-                  FAQ
+                <a
+                  href="#"
+                  className="text-base-content/70 hover:text-primary transition"
+                >
+                  Terms of Service
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Social */}
+          {/* Contact Info */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Follow Us</h4>
-            <div className="flex gap-4">
-              <a href="#" className="hover:text-green-400 transition">
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a href="#" className="hover:text-green-400 transition">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" className="hover:text-green-400 transition">
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a href="#" className="hover:text-green-400 transition">
-                <Mail className="w-5 h-5" />
-              </a>
+            <h4 className="font-bold text-lg mb-6 flex items-center gap-2">
+              <span className="w-1.5 h-6 bg-accent rounded-full"></span>
+              Join Us
+            </h4>
+            <div className="space-y-4">
+              <div className="p-4 bg-base-100 rounded-2xl border border-base-content/5 shadow-sm space-y-3">
+                <p className="text-xs font-bold uppercase tracking-widest text-base-content/40">
+                  Ready to help?
+                </p>
+                <Link
+                  to="/register"
+                  className="btn btn-primary btn-sm w-full rounded-xl"
+                >
+                  Get Started
+                </Link>
+              </div>
+              <div className="flex items-center gap-3 text-sm text-base-content/70">
+                <div className="p-2 bg-base-100 rounded-lg">
+                  <Mail size={16} />
+                </div>
+                <span>hello@socialevents.id</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-gray-700 pt-8 text-sm text-gray-400">
-          <div className="flex justify-between items-center">
-            <p>&copy; 2024 CommunityEvents. All rights reserved.</p>
-            <div className="flex gap-6">
-              <a href="#" className="hover:text-green-400 transition">
-                Privacy Policy
-              </a>
-              <a href="#" className="hover:text-green-400 transition">
-                Terms of Service
-              </a>
-            </div>
+        {/* Bottom Bar */}
+        <div className="pt-8 border-t border-base-content/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-base-content/40 uppercase tracking-widest">
+          <p>&copy; {currentYear} SocialEvents. Built for Impact.</p>
+          <div className="flex gap-8">
+            <a href="#" className="hover:text-primary transition">
+              Sitemap
+            </a>
+            <a href="#" className="hover:text-primary transition">
+              Cookies
+            </a>
           </div>
         </div>
       </div>
