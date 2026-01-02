@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Calendar, Users, Target } from "lucide-react";
 
 const containerVariants = {

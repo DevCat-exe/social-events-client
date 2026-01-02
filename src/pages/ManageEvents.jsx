@@ -6,7 +6,7 @@ import { getCreatorEvents, updateEvent, deleteEvent } from "../api/eventApi";
 import Swal from "sweetalert2";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 const ManageEvents = () => {
   const { user } = useContext(AuthContext);

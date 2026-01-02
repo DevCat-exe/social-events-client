@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Calendar, MapPin } from "lucide-react";
 import { AuthContext } from "../providers/AuthContext";
 import { getJoinedEvents } from "../api/eventApi";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 const JoinedEvents = () => {
   const { user } = useContext(AuthContext);

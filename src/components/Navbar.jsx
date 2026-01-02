@@ -14,7 +14,7 @@ import {
 import { useState, useRef, useEffect, useContext } from "react";
 import { AuthContext } from "../providers/AuthContext";
 import { useTheme } from "../providers/ThemeProvider";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
@@ -82,8 +82,8 @@ export default function Navbar() {
                 key={link.path}
                 to={link.path}
                 className={`text-sm font-semibold transition-all hover:text-primary ${location.pathname === link.path
-                    ? "text-primary"
-                    : "text-base-content/70"
+                  ? "text-primary"
+                  : "text-base-content/70"
                   }`}
               >
                 {link.name}
@@ -267,8 +267,8 @@ export default function Navbar() {
                   key={link.path}
                   to={link.path}
                   className={`block px-4 py-3 rounded-xl font-semibold transition ${location.pathname === link.path
-                      ? "bg-primary/10 text-primary"
-                      : "text-base-content/70"
+                    ? "bg-primary/10 text-primary"
+                    : "text-base-content/70"
                     }`}
                 >
                   {link.name}

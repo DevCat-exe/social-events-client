@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Calendar, MapPin, Users } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { getUpcomingEvents } from "../api/eventApi";
 
 const Upcoming = () => {

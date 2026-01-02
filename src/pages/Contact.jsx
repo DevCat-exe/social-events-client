@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Mail, Phone, MapPin } from "lucide-react";
 
 export default function Contact() {
@@ -53,7 +53,7 @@ export default function Contact() {
                 <input
                   type="text"
                   placeholder="Your Name"
-                  className="input input-bordered"
+                  className="input input-bordered focus:input-primary transition"
                 />
               </div>
               <div className="form-control">
@@ -63,7 +63,7 @@ export default function Contact() {
                 <input
                   type="email"
                   placeholder="Your Email"
-                  className="input input-bordered"
+                  className="input input-bordered focus:input-primary transition"
                 />
               </div>
               <div className="form-control">
@@ -71,7 +71,7 @@ export default function Contact() {
                   <span className="label-text">Message</span>
                 </label>
                 <textarea
-                  className="textarea textarea-bordered h-32"
+                  className="textarea textarea-bordered h-32 focus:textarea-primary transition"
                   placeholder="How can we help?"
                 ></textarea>
               </div>

@@ -1,12 +1,21 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import { Navigate, useLocation } from "react-router-dom";
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
   const location = useLocation();
+  const [timeoutReached, setTimeoutReached] = useState(false);
 
-  if (loading) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTimeoutReached(true);
+    }, 3000); // 3 second timeout
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading && !timeoutReached) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>

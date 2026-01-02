@@ -1,81 +1,69 @@
-import { motion } from "framer-motion";
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.6,
-      ease: "easeOut",
-    },
-  },
-};
+import { motion } from "motion/react";
 
 const galleries = [
   {
     image:
-      "https://images.pexels.com/photos/6590699/pexels-photo-6590699.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop",
     title: "Tree Plantation Drive",
-    description: "500+ trees planted",
+    description: "500+ trees planted in urban areas",
+    category: "Environment",
   },
   {
     image:
-      "https://images.pexels.com/photos/8088496/pexels-photo-8088496.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=400&h=300&fit=crop",
     title: "Beach Cleanup Campaign",
-    description: "2 tons of waste removed",
+    description: "2 tons of waste removed from coastlines",
+    category: "Environment",
   },
   {
     image:
-      "https://images.pexels.com/photos/6647028/pexels-photo-6647028.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&h=300&fit=crop",
     title: "Food Distribution Drive",
-    description: "1000+ families supported",
+    description: "1000+ families supported with meals",
+    category: "Social Welfare",
   },
   {
     image:
-      "https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop",
     title: "Education Support Program",
-    description: "Books to rural schools",
+    description: "Books and supplies to rural schools",
+    category: "Education",
   },
   {
     image:
-      "https://images.pexels.com/photos/6647019/pexels-photo-6647019.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop",
     title: "Free Medical Camp",
-    description: "300+ patients treated",
+    description: "300+ patients treated and counseled",
+    category: "Healthcare",
   },
   {
     image:
-      "https://images.pexels.com/photos/6647120/pexels-photo-6647120.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
     title: "Winter Clothing Drive",
-    description: "Warm clothes for needy",
+    description: "Warm clothes distributed to needy families",
+    category: "Social Welfare",
   },
 ];
 
 export default function Gallery() {
   return (
-    <section className="py-20 bg-base-200">
+    <section className="py-20 bg-base-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-base-content mb-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-4xl md:text-5xl font-bold text-base-content mb-4">
             Recent Event Highlights
           </h2>
-          <p className="text-xl text-base-content/70">
-            See the positive change our community has created
+          <p className="text-xl text-base-content/70 max-w-2xl mx-auto">
+            See the positive change our community has created through impactful social development events
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {galleries.map((gallery, idx) => (
             <motion.div
               key={idx}
@@ -83,26 +71,51 @@ export default function Gallery() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
               viewport={{ once: true }}
-              className="group relative bg-base-200 p-8 rounded-2xl hover:shadow-xl transition transform hover:-translate-y-2"
+              className="group bg-base-100 rounded-2xl shadow-sm border border-base-content/5 overflow-hidden hover:shadow-lg transition-all duration-300"
             >
-              <img
-                src={gallery.image}
-                alt={gallery.title}
-                className="w-full h-80 object-cover group-hover:scale-110 transition duration-300"
-              />
-              <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent flex items-end">
-                <div className="p-6">
-                  <h3 className="text-white text-xl font-bold mb-2">
-                    {gallery.title}
-                  </h3>
-                  <p className="text-green-200 text-sm">
-                    {gallery.description}
-                  </p>
+              <div className="relative overflow-hidden">
+                <img
+                  src={gallery.image}
+                  alt={gallery.title}
+                  className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                />
+                <div className="absolute top-4 left-4">
+                  <span className="px-3 py-1 bg-primary/90 text-primary-content text-xs font-semibold rounded-full">
+                    {gallery.category}
+                  </span>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-base-content mb-2 group-hover:text-primary transition-colors">
+                  {gallery.title}
+                </h3>
+                <p className="text-base-content/70 leading-relaxed">
+                  {gallery.description}
+                </p>
+                <div className="mt-4 pt-4 border-t border-base-content/5">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-primary font-medium">View Details</span>
+                    <span className="text-base-content/50">→</span>
+                  </div>
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="text-center mt-12"
+        >
+          <button className="btn btn-primary btn-lg px-8 py-4 rounded-full shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition">
+            View All Events
+          </button>
+        </motion.div>
       </div>
     </section>
   );
