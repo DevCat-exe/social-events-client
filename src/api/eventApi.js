@@ -1,11 +1,12 @@
 import axiosInstance from './axiosInstance';
 
 // Get upcoming events with optional filter and search
-export const getUpcomingEvents = async (type = '', search = '') => {
+export const getUpcomingEvents = async (type = '', search = '', location = '', dateRange = '', sortBy = 'date', page = 1, limit = 9) => {
     try {
-        const response = await axiosInstance.get('/events', {
-            params: { type, search }
-        });
+        const params = { type, search, location, dateRange, sortBy, page, limit };
+        // Remove empty params
+        Object.keys(params).forEach(key => params[key] === '' && delete params[key]);
+        const response = await axiosInstance.get('/events', { params });
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || 'Failed to fetch events');
@@ -59,6 +60,46 @@ export const getJoinedEvents = async (email) => {
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || 'Failed to fetch joined events');
+    }
+};
+
+// Register or update user in database
+export const registerUser = async () => {
+    try {
+        const response = await axiosInstance.post('/users');
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Failed to register user');
+    }
+};
+
+// Get current user profile
+export const getUserProfile = async () => {
+    try {
+        const response = await axiosInstance.get('/users/me');
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Failed to fetch user profile');
+    }
+};
+
+// Update current user profile
+export const updateUserProfile = async (updates) => {
+    try {
+        const response = await axiosInstance.put('/users/me', updates);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Failed to update user profile');
+    }
+};
+
+// Get all users (admin only)
+export const getAllUsers = async () => {
+    try {
+        const response = await axiosInstance.get('/users');
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Failed to fetch users');
     }
 };
 

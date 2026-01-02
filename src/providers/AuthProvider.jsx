@@ -10,6 +10,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../firebase.init";
+import { registerUser } from "../api/eventApi";
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -91,6 +92,12 @@ const AuthProvider = ({ children }) => {
         const token = await currentUser.getIdToken();
         setFirebaseToken(token);
         localStorage.setItem("firebaseToken", token);
+        // Register user in database
+        try {
+          await registerUser();
+        } catch (error) {
+          console.error("Failed to register user:", error);
+        }
       } else {
         setFirebaseToken(null);
         localStorage.removeItem("firebaseToken");
