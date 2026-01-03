@@ -10,12 +10,13 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../firebase.init";
-import { registerUser } from "../api/eventApi";
+import { registerUser, getUserProfile } from "../api/eventApi";
 
 const googleProvider = new GoogleAuthProvider();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [mongoUser, setMongoUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [firebaseToken, setFirebaseToken] = useState(null);
 
@@ -81,6 +82,7 @@ const AuthProvider = ({ children }) => {
     setLoading(true);
     return signOut(auth).then(() => {
       setFirebaseToken(null);
+      setMongoUser(null);
       localStorage.removeItem("firebaseToken");
     });
   };
@@ -92,14 +94,17 @@ const AuthProvider = ({ children }) => {
         const token = await currentUser.getIdToken();
         setFirebaseToken(token);
         localStorage.setItem("firebaseToken", token);
-        // Register user in database
+        // Register user in database and fetch profile
         try {
           await registerUser();
+          const profile = await getUserProfile();
+          setMongoUser(profile);
         } catch (error) {
-          console.error("Failed to register user:", error);
+          console.error("Failed to register/fetch user:", error);
         }
       } else {
         setFirebaseToken(null);
+        setMongoUser(null);
         localStorage.removeItem("firebaseToken");
       }
       setLoading(false);
@@ -111,6 +116,7 @@ const AuthProvider = ({ children }) => {
   const authinfo = {
     register,
     user,
+    mongoUser,
     loading,
     login,
     loginWithGoogle,

@@ -3,8 +3,8 @@ import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { AuthContext } from "../providers/AuthContext";
-import { getUserProfile, getAllUsers, getUpcomingEvents, getJoinedEvents, getTotalEventsCount, updateUserRole, deleteUser, deleteEvent } from "../api/eventApi";
-import { Calendar, Users, MapPin, TrendingUp, BarChart3, PieChart, Activity } from "lucide-react";
+import { getUserProfile, getAllUsers, getUpcomingEvents, getJoinedEvents, getTotalEventsCount, updateUserRole, deleteUser, deleteEvent, blockUser, unblockUser } from "../api/eventApi";
+import { Calendar, Users, MapPin, TrendingUp, BarChart3, PieChart, Activity, AlertTriangle } from "lucide-react";
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
@@ -23,37 +23,90 @@ const Dashboard = () => {
   const [recentEvents, setRecentEvents] = useState([]);
 
   const handleBlockUser = async (email) => {
-    try {
-      await updateUserRole(email, 'blocked');
-      setAllUsers(allUsers.map(u => u.email === email ? { ...u, role: 'blocked' } : u));
-      Swal.fire("Success", "User blocked", "success");
-    } catch (error) {
-      Swal.fire("Error", error.message, "error");
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: `You are about to block ${email}.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, block it!"
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await blockUser(email);
+        setAllUsers(allUsers.map(u => u.email === email ? { ...u, role: 'blocked' } : u));
+        Swal.fire("Blocked!", "User has been blocked.", "success");
+      } catch (error) {
+        Swal.fire("Error", error.message || "Failed to block user", "error");
+      }
+    }
+  };
+
+  const handleUnblockUser = async (email) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: `You are about to unblock ${email}.`,
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, unblock it!"
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await unblockUser(email);
+        setAllUsers(allUsers.map(u => u.email === email ? { ...u, role: 'user' } : u));
+        Swal.fire("Unblocked!", "User has been unblocked.", "success");
+      } catch (error) {
+        Swal.fire("Error", error.message || "Failed to unblock user", "error");
+      }
     }
   };
 
   const handleDeleteUser = async (email) => {
-    if (confirm("Are you sure you want to delete this user?")) {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: `You are about to delete ${email}. This action cannot be undone.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!"
+    });
+
+    if (result.isConfirmed) {
       try {
         await deleteUser(email);
         setAllUsers(allUsers.filter(u => u.email !== email));
-        Swal.fire("Success", "User deleted", "success");
+        Swal.fire("Deleted!", "User has been deleted.", "success");
       } catch (error) {
-        Swal.fire("Error", error.message, "error");
+        Swal.fire("Error", error.message || "Failed to delete user", "error");
       }
     }
   };
 
   const handleDeleteEvent = async (id) => {
-    if (confirm("Are you sure you want to delete this event?")) {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You are about to delete this event. This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!"
+    });
+
+    if (result.isConfirmed) {
       try {
         await deleteEvent(id);
         setAllEvents(allEvents.filter(e => e._id !== id));
-        // Also update recent events if the deleted event was in there
-        setRecentEvents(recentEvents.filter(e => e._id !== id));
-        Swal.fire("Success", "Event deleted", "success");
+        setRecentEvents(recentEvents.filter(e => e._id !== id)); // Also update recent events
+        Swal.fire("Deleted!", "Event has been deleted.", "success");
       } catch (error) {
-        Swal.fire("Error", error.message, "error");
+        Swal.fire("Error", error.message || "Failed to delete event", "error");
       }
     }
   };
@@ -140,6 +193,20 @@ const Dashboard = () => {
             {userProfile?.role === 'admin' ? 'Manage users and events from here.' : "Here's what's happening with your events today."}
           </p>
         </motion.div>
+
+        {userProfile?.role === 'blocked' && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="alert alert-error mb-8 shadow-lg"
+          >
+            <AlertTriangle className="stroke-current shrink-0 h-6 w-6" />
+            <div>
+              <h3 className="font-bold">Account Restricted</h3>
+              <div className="text-xs">Your account has been blocked. You cannot create or join events. Contact support for assistance.</div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Stats Cards */}
         <motion.div
@@ -322,27 +389,30 @@ const Dashboard = () => {
                 Recent Activity
               </h3>
               <div className="space-y-4">
-                <div className="flex items-center gap-4 p-3 bg-base-200 rounded-lg">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-base-content font-medium">Joined "Community Garden Workshop"</p>
-                    <p className="text-base-content/70 text-sm">2 hours ago</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 p-3 bg-base-200 rounded-lg">
-                  <div className="w-2 h-2 bg-secondary rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-base-content font-medium">Created new event "Tech Meetup"</p>
-                    <p className="text-base-content/70 text-sm">1 day ago</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 p-3 bg-base-200 rounded-lg">
-                  <div className="w-2 h-2 bg-accent rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-base-content font-medium">Updated profile information</p>
-                    <p className="text-base-content/70 text-sm">3 days ago</p>
-                  </div>
-                </div>
+                {recentEvents.length > 0 ? (
+                  recentEvents.map((event) => (
+                    <div key={event._id} className="flex items-center gap-4 p-3 bg-base-200 rounded-lg">
+                      <div className="w-2 h-2 bg-primary rounded-full"></div>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center gap-2">
+                          <p className="text-base-content font-medium line-clamp-1">{event.title}</p>
+                          <span className="bg-primary/20 text-primary px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap">
+                            {event.eventType}
+                          </span>
+                        </div>
+                        <p className="text-base-content/70 text-sm">
+                          {new Date(event.createdAt || Date.now()).toLocaleDateString(undefined, {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-base-content/70 text-center py-4">No recent events found.</p>
+                )}
               </div>
             </motion.div>
           </>
@@ -365,8 +435,30 @@ const Dashboard = () => {
                     <p className="text-xs text-base-content/50 capitalize">{user.role}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="btn btn-sm btn-warning" onClick={() => handleBlockUser(user.email)}>Block</button>
-                    <button className="btn btn-sm btn-error" onClick={() => handleDeleteUser(user.email)}>Delete</button>
+                    {user.role === 'blocked' ? (
+                      <button
+                        className="btn btn-sm btn-success"
+                        onClick={() => handleUnblockUser(user.email)}
+                        disabled={user.email === userProfile?.email}
+                      >
+                        Unblock
+                      </button>
+                    ) : (
+                      <button
+                        className="btn btn-sm btn-warning"
+                        onClick={() => handleBlockUser(user.email)}
+                        disabled={user.email === userProfile?.email}
+                      >
+                        Block
+                      </button>
+                    )}
+                    <button
+                      className="btn btn-sm btn-error"
+                      onClick={() => handleDeleteUser(user.email)}
+                      disabled={user.email === userProfile?.email}
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
               ))}

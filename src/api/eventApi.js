@@ -162,3 +162,21 @@ export const deleteEvent = async (id) => {
         throw new Error(error.response?.data?.message || 'Failed to delete event');
     }
 };
+
+// Block user
+export const blockUser = async (email) => {
+    try {
+        return await updateUserRole(email, 'blocked');
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Failed to block user');
+    }
+};
+
+// Unblock user
+export const unblockUser = async (email) => {
+    try {
+        return await updateUserRole(email, 'user');
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Failed to unblock user');
+    }
+};

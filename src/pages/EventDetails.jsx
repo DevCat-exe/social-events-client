@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Calendar, MapPin, User, FileText, Users } from "lucide-react";
+import { Calendar, MapPin, User, FileText, Users, AlertTriangle } from "lucide-react";
 import { motion } from "motion/react";
 import { AuthContext } from "../providers/AuthContext";
 import { getEventById, joinEvent, getUpcomingEvents, getJoinedEvents, getUserByEmail } from "../api/eventApi";
@@ -9,13 +9,15 @@ import Swal from "sweetalert2";
 const EventDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { user, mongoUser } = useContext(AuthContext);
   const [event, setEvent] = useState(null);
   const [relatedEvents, setRelatedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
   const [hasJoined, setHasJoined] = useState(false);
   const [creator, setCreator] = useState(null);
+
+  const isBlocked = mongoUser?.role === 'blocked';
 
   useEffect(() => {
     fetchEvent();
@@ -63,6 +65,11 @@ const EventDetails = () => {
       navigate("/login");
       return;
     }
+    
+    if (isBlocked) {
+      Swal.fire("Access Denied", "Your account is blocked. You cannot join events.", "error");
+      return;
+    }
 
     setJoining(true);
     try {
@@ -101,6 +108,17 @@ const EventDetails = () => {
   return (
     <div className="min-h-screen bg-base-200 py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {isBlocked && (
+          <div className="alert alert-error mb-8 shadow-lg">
+            <AlertTriangle className="stroke-current shrink-0 h-6 w-6" />
+            <div>
+              <h3 className="font-bold">Account Restricted</h3>
+              <div className="text-xs">Your account is blocked. You cannot join this event.</div>
+            </div>
+          </div>
+        )}
+
         {/* Event Image */}
         {event.thumbnail && (
           <motion.div
@@ -189,6 +207,13 @@ const EventDetails = () => {
                       className="btn btn-neutral disabled:opacity-50 cursor-not-allowed"
                     >
                       Your Event
+                    </button>
+                  ) : isBlocked ? (
+                    <button
+                      disabled
+                      className="btn btn-error disabled:opacity-50 cursor-not-allowed"
+                    >
+                      Account Blocked
                     </button>
                   ) : hasJoined ? (
                     <button

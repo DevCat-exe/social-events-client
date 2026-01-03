@@ -5,9 +5,10 @@ import { createEvent } from "../api/eventApi";
 import Swal from "sweetalert2";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { AlertTriangle } from "lucide-react";
 
 const CreateEvent = () => {
-  const { user } = useContext(AuthContext);
+  const { user, mongoUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const [form, setForm] = useState({
     title: "",
@@ -18,6 +19,8 @@ const CreateEvent = () => {
     thumbnail: "",
   });
   const [loading, setLoading] = useState(false);
+
+  const isBlocked = mongoUser?.role === 'blocked';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,6 +33,10 @@ const CreateEvent = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isBlocked) {
+      Swal.fire("Access Denied", "Your account is blocked. You cannot create events.", "error");
+      return;
+    }
     setLoading(true);
     try {
       await createEvent({
@@ -53,6 +60,16 @@ const CreateEvent = () => {
           Create Event
         </h1>
 
+        {isBlocked && (
+          <div className="alert alert-error mb-6 shadow-lg">
+            <AlertTriangle className="stroke-current shrink-0 h-6 w-6" />
+            <div>
+              <h3 className="font-bold">Account Restricted</h3>
+              <div className="text-xs">Your account is blocked. You cannot create new events.</div>
+            </div>
+          </div>
+        )}
+
         <div className="bg-base-100 border border-base-300 rounded-2xl w-full p-8">
           <h2 className="text-2xl font-bold text-base-content mb-6">
             Event Details
@@ -70,7 +87,8 @@ const CreateEvent = () => {
               placeholder="e.g., Tree Plantation Drive"
               value={form.title}
               onChange={handleChange}
-              className="input input-bordered w-full bg-base-100 text-base-content border-base-300"
+              disabled={isBlocked}
+              className="input input-bordered w-full bg-base-100 text-base-content border-base-300 disabled:opacity-60"
               required
             />
 
@@ -84,8 +102,9 @@ const CreateEvent = () => {
               placeholder="Tell people about your event"
               value={form.description}
               onChange={handleChange}
+              disabled={isBlocked}
               rows="4"
-              className="textarea textarea-bordered w-full bg-base-100 text-base-content border-base-300"
+              className="textarea textarea-bordered w-full bg-base-100 text-base-content border-base-300 disabled:opacity-60"
             />
 
             <label className="block mt-4">
@@ -97,7 +116,8 @@ const CreateEvent = () => {
               name="eventType"
               value={form.eventType}
               onChange={handleChange}
-              className="select select-bordered w-full bg-base-100 text-base-content border-base-300"
+              disabled={isBlocked}
+              className="select select-bordered w-full bg-base-100 text-base-content border-base-300 disabled:opacity-60"
             >
               <option value="Community">Community</option>
               <option value="Education">Education</option>
@@ -116,7 +136,8 @@ const CreateEvent = () => {
               placeholder="Event location"
               value={form.location}
               onChange={handleChange}
-              className="input input-bordered w-full bg-base-100 text-base-content border-base-300"
+              disabled={isBlocked}
+              className="input input-bordered w-full bg-base-100 text-base-content border-base-300 disabled:opacity-60"
               required
             />
 
@@ -125,13 +146,16 @@ const CreateEvent = () => {
                 Event Date
               </span>
             </label>
-            <DatePicker
-              selected={form.eventDate}
-              onChange={handleDateChange}
-              minDate={new Date()}
-              className="input input-bordered w-full bg-base-100 text-base-content border-base-300"
-              dateFormat="yyyy-MM-dd"
-            />
+            <div className={isBlocked ? "opacity-60 pointer-events-none" : ""}>
+                <DatePicker
+                selected={form.eventDate}
+                onChange={handleDateChange}
+                minDate={new Date()}
+                className="input input-bordered w-full bg-base-100 text-base-content border-base-300"
+                dateFormat="yyyy-MM-dd"
+                disabled={isBlocked}
+                />
+            </div>
 
             <label className="block mt-4">
               <span className="label-text font-semibold text-base-content">
@@ -144,15 +168,16 @@ const CreateEvent = () => {
               placeholder="https://example.com/image.jpg"
               value={form.thumbnail}
               onChange={handleChange}
-              className="input input-bordered w-full bg-base-100 text-base-content border-base-300"
+              disabled={isBlocked}
+              className="input input-bordered w-full bg-base-100 text-base-content border-base-300 disabled:opacity-60"
             />
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || isBlocked}
               className="btn btn-primary w-full mt-6"
             >
-              {loading ? "Creating..." : "Create Event"}
+              {loading ? "Creating..." : isBlocked ? "Account Blocked" : "Create Event"}
             </button>
           </form>
         </div>
