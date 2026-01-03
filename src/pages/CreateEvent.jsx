@@ -5,7 +5,7 @@ import { createEvent } from "../api/eventApi";
 import Swal from "sweetalert2";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Plus, X } from "lucide-react";
 
 const CreateEvent = () => {
   const { user, mongoUser } = useContext(AuthContext);
@@ -16,11 +16,11 @@ const CreateEvent = () => {
     eventType: "Community",
     location: "",
     eventDate: new Date(),
-    thumbnail: "",
+    images: [""],
   });
   const [loading, setLoading] = useState(false);
 
-  const isBlocked = mongoUser?.role === 'blocked';
+  const isBlocked = mongoUser?.role === "blocked";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,16 +31,47 @@ const CreateEvent = () => {
     setForm((prev) => ({ ...prev, eventDate: date }));
   };
 
+  const handleImageChange = (index, value) => {
+    const newImages = [...form.images];
+    newImages[index] = value;
+    setForm((prev) => ({ ...prev, images: newImages }));
+  };
+
+  const addImageField = () => {
+    setForm((prev) => ({ ...prev, images: [...prev.images, ""] }));
+  };
+
+  const removeImageField = (index) => {
+    if (form.images.length > 1) {
+      const newImages = form.images.filter((_, i) => i !== index);
+      setForm((prev) => ({ ...prev, images: newImages }));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isBlocked) {
-      Swal.fire("Access Denied", "Your account is blocked. You cannot create events.", "error");
+      Swal.fire(
+        "Access Denied",
+        "Your account is blocked. You cannot create events.",
+        "error"
+      );
       return;
     }
+
+    // Filter out empty image URLs
+    const validImages = form.images.filter((img) => img && img.trim() !== "");
+
+    if (validImages.length === 0) {
+      Swal.fire("Error", "Please provide at least one image URL", "error");
+      return;
+    }
+
     setLoading(true);
     try {
       await createEvent({
         ...form,
+        images: validImages,
         eventDate: form.eventDate.toISOString(),
         creatorEmail: user.email,
       });
@@ -65,7 +96,9 @@ const CreateEvent = () => {
             <AlertTriangle className="stroke-current shrink-0 h-6 w-6" />
             <div>
               <h3 className="font-bold">Account Restricted</h3>
-              <div className="text-xs">Your account is blocked. You cannot create new events.</div>
+              <div className="text-xs">
+                Your account is blocked. You cannot create new events.
+              </div>
             </div>
           </div>
         )}
@@ -147,37 +180,74 @@ const CreateEvent = () => {
               </span>
             </label>
             <div className={isBlocked ? "opacity-60 pointer-events-none" : ""}>
-                <DatePicker
+              <DatePicker
                 selected={form.eventDate}
                 onChange={handleDateChange}
                 minDate={new Date()}
                 className="input input-bordered w-full bg-base-100 text-base-content border-base-300"
                 dateFormat="yyyy-MM-dd"
                 disabled={isBlocked}
-                />
+              />
             </div>
 
             <label className="block mt-4">
               <span className="label-text font-semibold text-base-content">
-                Thumbnail URL
+                Event Images (
+                {form.images.filter((img) => img.trim() !== "").length} /{" "}
+                {form.images.length})
               </span>
             </label>
-            <input
-              type="url"
-              name="thumbnail"
-              placeholder="https://example.com/image.jpg"
-              value={form.thumbnail}
-              onChange={handleChange}
-              disabled={isBlocked}
-              className="input input-bordered w-full bg-base-100 text-base-content border-base-300 disabled:opacity-60"
-            />
+
+            <div className="space-y-3">
+              {form.images.map((image, index) => (
+                <div key={index} className="flex gap-2">
+                  <input
+                    type="url"
+                    placeholder={`Image URL ${index + 1}`}
+                    value={image}
+                    onChange={(e) => handleImageChange(index, e.target.value)}
+                    disabled={isBlocked}
+                    className="input input-bordered w-full bg-base-100 text-base-content border-base-300 disabled:opacity-60"
+                  />
+                  {form.images.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeImageField(index)}
+                      disabled={isBlocked}
+                      className="btn btn-error btn-square disabled:opacity-60"
+                      title="Remove image"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  )}
+                </div>
+              ))}
+
+              <button
+                type="button"
+                onClick={addImageField}
+                disabled={isBlocked || form.images.length >= 10}
+                className="btn btn-outline btn-primary w-full disabled:opacity-60"
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                Add Another Image {form.images.length >= 10 && "(Max 10)"}
+              </button>
+
+              <p className="text-sm text-base-content/70 mt-2">
+                Add up to 10 images. At least one image is required.
+              </p>
+            </div>
 
             <button
               type="submit"
               disabled={loading || isBlocked}
               className="btn btn-primary w-full mt-6"
             >
-              {loading ? "Creating..." : isBlocked ? "Account Blocked" : "Create Event"}
+              {loading
+                ? "Creating..."
+                : isBlocked
+                ? "Account Blocked"
+                : "Create Event"}
             </button>
           </form>
         </div>

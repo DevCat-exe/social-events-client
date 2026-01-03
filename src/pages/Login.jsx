@@ -81,6 +81,28 @@ const Login = () => {
             >
               {loading ? "Logging in..." : "Login"}
             </button>
+            <div className="flex flex-col space-y-2 mt-4">
+              <button
+                type="button"
+                className="btn btn-outline w-full"
+                onClick={() => {
+                  setEmail("john@example.com");
+                  setPassword("User1234!");
+                }}
+              >
+                Demo User
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline w-full"
+                onClick={() => {
+                  setEmail("admin@example.com");
+                  setPassword("Admin1234!");
+                }}
+              >
+                Demo Admin
+              </button>
+            </div>
           </form>
 
           <div className="divider">OR</div>

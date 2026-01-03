@@ -32,20 +32,29 @@ export default function Footer() {
             </p>
             <div className="flex gap-3">
               <a
-                href="#"
+                href="https://facebook.com/socialevents"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 bg-base-100 rounded-lg hover:bg-primary hover:text-primary-content transition shadow-sm border border-base-content/5"
+                aria-label="Facebook"
               >
                 <Facebook size={18} />
               </a>
               <a
-                href="#"
+                href="https://twitter.com/socialevents"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 bg-base-100 rounded-lg hover:bg-primary hover:text-primary-content transition shadow-sm border border-base-content/5"
+                aria-label="Twitter"
               >
                 <Twitter size={18} />
               </a>
               <a
-                href="#"
+                href="https://instagram.com/socialevents"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 bg-base-100 rounded-lg hover:bg-primary hover:text-primary-content transition shadow-sm border border-base-content/5"
+                aria-label="Instagram"
               >
                 <Instagram size={18} />
               </a>
@@ -111,27 +120,27 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/contact"
                   className="text-base-content/70 hover:text-primary transition"
                 >
                   Help Center
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/privacy"
                   className="text-base-content/70 hover:text-primary transition"
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/terms"
                   className="text-base-content/70 hover:text-primary transition"
                 >
                   Terms of Service
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

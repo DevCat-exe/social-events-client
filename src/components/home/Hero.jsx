@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "motion/react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 
 const slides = [
   {
@@ -48,7 +48,7 @@ export default function Hero() {
   const slide = slides[currentSlide];
 
   return (
-    <section className={`relative bg-linear-to-br ${slide.bg} text-white py-24 overflow-hidden`}>
+    <section className={`relative bg-linear-to-br ${slide.bg} text-white overflow-hidden`} style={{ minHeight: '75vh' }}>
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
@@ -69,7 +69,7 @@ export default function Hero() {
       </button>
 
       {/* Indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-20 flex gap-2">
         {slides.map((_, index) => (
           <button
             key={index}
@@ -86,7 +86,7 @@ export default function Hero() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
       >
-        <div className="min-h-[400px] flex items-center justify-center">
+        <div className="min-h-[300px] flex items-center justify-center">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide}
@@ -100,7 +100,7 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-5xl md:text-6xl font-bold mb-6 leading-tight"
+                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
               >
                 {slide.title}
               </motion.h1>
@@ -108,7 +108,7 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-xl md:text-2xl mb-8 text-green-50 leading-relaxed"
+                className="text-lg md:text-xl lg:text-2xl mb-8 text-green-50 leading-relaxed"
               >
                 {slide.subtitle}
               </motion.p>
@@ -120,13 +120,13 @@ export default function Hero() {
               >
                 <Link
                   to="/upcoming"
-                  className="bg-base-100 text-primary hover:bg-base-200 font-semibold px-8 py-4 rounded-lg transition shadow-lg hover:shadow-xl"
+                  className="bg-base-100 text-primary hover:bg-base-200 font-semibold px-6 md:px-8 py-3 md:py-4 rounded-lg transition shadow-lg hover:shadow-xl"
                 >
                   {slide.cta1}
                 </Link>
                 <Link
                   to="/create"
-                  className="bg-primary hover:bg-primary-focus text-primary-content font-semibold px-8 py-4 rounded-lg transition border-2 border-base-100"
+                  className="bg-primary hover:bg-primary-focus text-primary-content font-semibold px-6 md:px-8 py-3 md:py-4 rounded-lg transition border-2 border-base-100"
                 >
                   {slide.cta2}
                 </Link>
@@ -134,6 +134,22 @@ export default function Hero() {
             </motion.div>
           </AnimatePresence>
         </div>
+      </motion.div>
+      
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 animate-bounce"
+      >
+        <Link
+          to="#features"
+          className="flex flex-col items-center gap-2 text-white/80 hover:text-white transition"
+          aria-label="Scroll to next section"
+        >
+          <span className="text-sm font-medium">Discover More</span>
+          <ChevronDown size={24} />
+        </Link>
       </motion.div>
     </section>
   );

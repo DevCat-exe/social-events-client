@@ -13,6 +13,8 @@ import Contact from "../pages/Contact";
 import Blog from "../pages/Blog";
 import Dashboard from "../pages/Dashboard";
 import Profile from "../pages/Profile";
+import Privacy from "../pages/Privacy";
+import Terms from "../pages/Terms";
 import PrivateRoute from "../providers/PrivateRoute";
 
 export const router = createBrowserRouter([
@@ -47,6 +49,14 @@ export const router = createBrowserRouter([
       {
         path: "blog",
         Component: Blog,
+      },
+      {
+        path: "privacy",
+        Component: Privacy,
+      },
+      {
+        path: "terms",
+        Component: Terms,
       },
       {
         path: "create",

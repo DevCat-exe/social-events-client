@@ -5,6 +5,9 @@ import Swal from 'sweetalert2';
 import { AuthContext } from "../providers/AuthContext";
 import { getUserProfile, getAllUsers, getUpcomingEvents, getJoinedEvents, getTotalEventsCount, updateUserRole, deleteUser, deleteEvent, blockUser, unblockUser } from "../api/eventApi";
 import { Calendar, Users, MapPin, TrendingUp, BarChart3, PieChart, Activity, AlertTriangle } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Legend } from 'recharts';
+
+const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
@@ -19,6 +22,8 @@ const Dashboard = () => {
   const [allEvents, setAllEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [categoryData, setCategoryData] = useState([]);
+  const [monthlyData, setMonthlyData] = useState([]);
 
   const [recentEvents, setRecentEvents] = useState([]);
 
@@ -144,6 +149,36 @@ const Dashboard = () => {
       setAllUsers(allUsersData);
       setAllEvents(allEventsData);
       setRecentEvents(recent.events || []);
+
+      const eventsList = events.events || [];
+      
+      const categories = eventsList.reduce((acc, event) => {
+        acc[event.eventType] = (acc[event.eventType] || 0) + 1;
+        return acc;
+      }, {});
+
+      const categoryDataFormatted = Object.entries(categories).map(([name, value]) => ({
+        name,
+        value
+      }));
+
+      setCategoryData(categoryDataFormatted);
+
+      const months = eventsList.reduce((acc, event) => {
+        const month = new Date(event.createdAt).toLocaleDateString('en-US', { month: 'short' });
+        acc[month] = (acc[month] || 0) + 1;
+        return acc;
+      }, {});
+
+      const monthlyDataFormatted = Object.entries(months)
+        .map(([month, count]) => ({ month, count }))
+        .sort((a, b) => {
+          const monthsOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          return monthsOrder.indexOf(a.month) - monthsOrder.indexOf(b.month);
+        });
+
+      setMonthlyData(monthlyDataFormatted);
+
       setStats({
         totalEvents: totalCount,
         joinedEvents: joined.length,
@@ -306,36 +341,39 @@ const Dashboard = () => {
                   <PieChart className="w-5 h-5" />
                   Event Categories
                 </h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-base-content">Community</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 bg-primary h-2 rounded"></div>
-                      <span className="text-sm text-base-content/70">35%</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-base-content">Education</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-16 bg-secondary h-2 rounded"></div>
-                      <span className="text-sm text-base-content/70">25%</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-base-content">Health</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-12 bg-accent h-2 rounded"></div>
-                      <span className="text-sm text-base-content/70">20%</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-base-content">Environment</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 bg-info h-2 rounded"></div>
-                      <span className="text-sm text-base-content/70">20%</span>
-                    </div>
-                  </div>
-                </div>
+                {categoryData.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <RechartsPieChart>
+                      <Pie
+                        data={categoryData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        animationBegin={0}
+                        animationDuration={800}
+                      >
+                        {categoryData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'var(--fallback-b1, oklch(var(--b1)))',
+                          border: '1px solid var(--fallback-bc, oklch(var(--bc) / 0.2))',
+                          borderRadius: '8px',
+                          color: 'var(--fallback-bc, oklch(var(--bc)))'
+                        }}
+                      />
+                      <Legend />
+                    </RechartsPieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <p className="text-base-content/60 text-center py-12">No event data available</p>
+                )}
               </div>
 
               {/* Activity Chart */}
@@ -344,36 +382,43 @@ const Dashboard = () => {
                   <BarChart3 className="w-5 h-5" />
                   Monthly Activity
                 </h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-base-content">Jan</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 bg-primary h-3 rounded"></div>
-                      <span className="text-sm text-base-content/70">24</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-base-content">Feb</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 bg-secondary h-3 rounded"></div>
-                      <span className="text-sm text-base-content/70">18</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-base-content">Mar</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-28 bg-accent h-3 rounded"></div>
-                      <span className="text-sm text-base-content/70">32</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-base-content">Apr</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-16 bg-info h-3 rounded"></div>
-                      <span className="text-sm text-base-content/70">14</span>
-                    </div>
-                  </div>
-                </div>
+                {monthlyData.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={monthlyData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--fallback-bc, oklch(var(--bc) / 0.1))" />
+                      <XAxis 
+                        dataKey="month" 
+                        stroke="var(--fallback-bc, oklch(var(--bc)))"
+                        tick={{ fill: 'var(--fallback-bc, oklch(var(--bc)))' }}
+                      />
+                      <YAxis 
+                        stroke="var(--fallback-bc, oklch(var(--bc)))"
+                        tick={{ fill: 'var(--fallback-bc, oklch(var(--bc)))' }}
+                      />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'var(--fallback-b1, oklch(var(--b1)))',
+                          border: '1px solid var(--fallback-bc, oklch(var(--bc) / 0.2))',
+                          borderRadius: '8px',
+                          color: 'var(--fallback-bc, oklch(var(--bc)))'
+                        }}
+                        cursor={{ fill: 'var(--fallback-bc, oklch(var(--bc) / 0.1))' }}
+                      />
+                      <Bar 
+                        dataKey="count" 
+                        radius={[8, 8, 0, 0]}
+                        animationBegin={0}
+                        animationDuration={800}
+                      >
+                        {monthlyData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <p className="text-base-content/60 text-center py-12">No activity data available</p>
+                )}
               </div>
             </motion.div>
 
