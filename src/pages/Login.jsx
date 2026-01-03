@@ -17,7 +17,7 @@ const Login = () => {
     try {
       await login(email, password);
       Swal.fire("Success!", "Logged in successfully", "success");
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       Swal.fire("Error", error.message || "Login failed", "error");
     } finally {
@@ -30,7 +30,7 @@ const Login = () => {
     try {
       await loginWithGoogle();
       Swal.fire("Success!", "Logged in with Google", "success");
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       Swal.fire("Error", error.message || "Google login failed", "error");
     } finally {

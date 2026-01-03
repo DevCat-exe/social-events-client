@@ -11,6 +11,8 @@ import ManageEvents from "../pages/ManageEvents";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
 import Blog from "../pages/Blog";
+import Dashboard from "../pages/Dashboard";
+import Profile from "../pages/Profile";
 import PrivateRoute from "../providers/PrivateRoute";
 
 export const router = createBrowserRouter([
@@ -71,6 +73,22 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <ManageEvents></ManageEvents>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "dashboard",
+        element: (
+          <PrivateRoute>
+            <Dashboard></Dashboard>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "profile",
+        element: (
+          <PrivateRoute>
+            <Profile></Profile>
           </PrivateRoute>
         ),
       },

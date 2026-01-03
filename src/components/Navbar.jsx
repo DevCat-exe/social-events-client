@@ -196,6 +196,18 @@ export default function Navbar() {
                           </span>
                         </Link>
                         <Link
+                          to="/dashboard"
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary/10 hover:text-primary transition group"
+                          onClick={() => setShowDropdown(false)}
+                        >
+                          <div className="p-2 bg-base-300/50 rounded-lg group-hover:bg-primary/20">
+                            <LayoutDashboard className="w-4 h-4" />
+                          </div>
+                          <span className="text-sm font-medium">
+                            Dashboard
+                          </span>
+                        </Link>
+                        <Link
                           to="/create"
                           className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary/10 hover:text-primary transition group"
                           onClick={() => setShowDropdown(false)}
