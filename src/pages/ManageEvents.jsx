@@ -220,10 +220,12 @@ const ManageEvents = () => {
                     </div>
                   </div>
                 ) : (
-                  <Link to={`/events/${event._id}`}>
-                    <h3 className="text-xl font-bold text-base-content mb-2">
-                      {event.title}
-                    </h3>
+                  <div className="block">
+                    <Link to={`/events/${event._id}`} className="hover:underline">
+                      <h3 className="text-xl font-bold text-base-content mb-2">
+                        {event.title}
+                      </h3>
+                    </Link>
                     <p className="text-base-content/70 mb-4">
                       {event.description}
                     </p>
@@ -243,12 +245,15 @@ const ManageEvents = () => {
                     </div>
 
                     <div className="flex gap-2">
+                      <Link to={`/events/${event._id}`} className="btn btn-sm btn-ghost border-base-300">
+                        View Details
+                      </Link>
                       <button
                         onClick={(e) => {
                           e.preventDefault();
                           handleEdit(event);
                         }}
-                        className="btn btn-info"
+                        className="btn btn-sm btn-info"
                       >
                         <Edit2 className="w-4 h-4" />
                         Edit
@@ -258,13 +263,13 @@ const ManageEvents = () => {
                           e.preventDefault();
                           handleDelete(event._id);
                         }}
-                        className="btn btn-error"
+                        className="btn btn-sm btn-error"
                       >
                         <Trash2 className="w-4 h-4" />
                         Delete
                       </button>
                     </div>
-                  </Link>
+                  </div>
                 )}
               </motion.div>
             ))}

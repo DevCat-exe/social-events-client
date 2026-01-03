@@ -20,6 +20,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
+  const [recentEvents, setRecentEvents] = useState([]);
+
   const handleBlockUser = async (email) => {
     try {
       await updateUserRole(email, 'blocked');
@@ -47,6 +49,8 @@ const Dashboard = () => {
       try {
         await deleteEvent(id);
         setAllEvents(allEvents.filter(e => e._id !== id));
+        // Also update recent events if the deleted event was in there
+        setRecentEvents(recentEvents.filter(e => e._id !== id));
         Swal.fire("Success", "Event deleted", "success");
       } catch (error) {
         Swal.fire("Error", error.message, "error");
@@ -60,11 +64,14 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [profile, events, joined, totalCount] = await Promise.all([
+      // Fetch data in parallel
+      const [profile, events, joined, totalCount, recent] = await Promise.all([
         getUserProfile(),
-        getUpcomingEvents('', '', '', '', 'date', 1, 100),
+        getUpcomingEvents('', '', '', '', 'date', 1, 100), // General upcoming for stats/list
         user ? getJoinedEvents(user.email) : Promise.resolve([]),
-        getTotalEventsCount()
+        getTotalEventsCount(),
+        // Fetch 3 most recent events by creation date
+        getUpcomingEvents('', '', '', '', 'newest', 1, 3) 
       ]);
 
       setUserProfile(profile);
@@ -83,6 +90,7 @@ const Dashboard = () => {
 
       setAllUsers(allUsersData);
       setAllEvents(allEventsData);
+      setRecentEvents(recent.events || []);
       setStats({
         totalEvents: totalCount,
         joinedEvents: joined.length,
@@ -188,26 +196,26 @@ const Dashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="mb-8"
+            className="mb-8 flex justify-center"
           >
-            <div className="flex flex-wrap gap-4 bg-base-100 p-2 rounded-xl shadow-sm">
+            <div className="flex bg-base-100 p-1.5 rounded-full shadow-lg border border-base-content/5 relative">
               {['overview', 'users', 'events'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`relative px-6 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                    activeTab === tab ? 'text-primary-content' : 'text-base-content hover:bg-base-200'
+                  className={`relative px-8 py-2.5 rounded-full text-sm font-semibold transition-colors duration-300 z-10 ${
+                    activeTab === tab ? 'text-primary-content' : 'text-base-content/70 hover:text-base-content'
                   }`}
                 >
                   {activeTab === tab && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute inset-0 bg-primary rounded-lg"
+                      className="absolute inset-0 bg-primary rounded-full -z-10 shadow-md"
                       initial={false}
-                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
-                  <span className="relative z-10 capitalize">
+                  <span className="capitalize">
                     {tab === 'users' ? 'Manage Users' : tab === 'events' ? 'Manage Events' : tab}
                   </span>
                 </button>

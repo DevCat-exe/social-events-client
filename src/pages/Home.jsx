@@ -5,23 +5,21 @@ import Testimonials from "../components/home/Testimonials";
 import Categories from "../components/home/Categories";
 import FAQ from "../components/home/FAQ";
 import CTA from "../components/home/CTA";
-import Gallery from "../components/home/Gallery";
 import Newsletter from "../components/home/Newsletter";
 import Partners from "../components/home/Partners";
 
 const Home = () => {
   return (
-    <div>
+    <div className="overflow-x-hidden">
       <Hero />
-      <Partners />
       <Features />
+      <Categories />
       <Statistics />
       <Testimonials />
-      <Categories />
-      <FAQ />
+      <Partners />
       <CTA />
-      <Gallery />
       <Newsletter />
+      <FAQ />
     </div>
   );
 };

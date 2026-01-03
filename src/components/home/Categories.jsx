@@ -1,76 +1,70 @@
 import { motion } from "motion/react";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { getUpcomingEvents } from "../../api/eventApi";
 import {
     Heart,
     TreePine,
     GraduationCap,
     Users,
-    Home,
-    Shield,
-    Palette,
-    Utensils,
 } from "lucide-react";
 
-const categories = [
+const initialCategories = [
     {
-        name: "Community Service",
-        icon: Heart,
+        name: "Community",
+        icon: Users,
         description: "Help build stronger communities through service projects",
-        color: "from-red-500 to-pink-500",
-        events: 245,
-    },
-    {
-        name: "Environmental",
-        icon: TreePine,
-        description: "Protect our planet through conservation and cleanup efforts",
-        color: "from-green-500 to-teal-500",
-        events: 189,
+        color: "from-blue-500 to-indigo-500",
+        events: 0,
     },
     {
         name: "Education",
         icon: GraduationCap,
         description: "Support learning and educational development initiatives",
-        color: "from-blue-500 to-indigo-500",
-        events: 156,
-    },
-    {
-        name: "Social Welfare",
-        icon: Users,
-        description: "Assist those in need and promote social welfare",
         color: "from-purple-500 to-violet-500",
-        events: 134,
+        events: 0,
     },
     {
-        name: "Housing & Shelter",
-        icon: Home,
-        description: "Help provide housing and shelter for those in need",
-        color: "from-orange-500 to-red-500",
-        events: 98,
+        name: "Health",
+        icon: Heart,
+        description: "Promote health and wellness in our society",
+        color: "from-red-500 to-pink-500",
+        events: 0,
     },
     {
-        name: "Safety & Security",
-        icon: Shield,
-        description: "Promote community safety and security initiatives",
-        color: "from-gray-600 to-gray-800",
-        events: 87,
-    },
-    {
-        name: "Arts & Culture",
-        icon: Palette,
-        description: "Celebrate diversity through arts and cultural events",
-        color: "from-yellow-500 to-orange-500",
-        events: 76,
-    },
-    {
-        name: "Food & Nutrition",
-        icon: Utensils,
-        description: "Combat hunger and promote healthy nutrition",
-        color: "from-emerald-500 to-green-500",
-        events: 92,
+        name: "Environment",
+        icon: TreePine,
+        description: "Protect our planet through conservation and cleanup efforts",
+        color: "from-green-500 to-teal-500",
+        events: 0,
     },
 ];
 
 export default function Categories() {
+    const [categories, setCategories] = useState(initialCategories);
+
+    useEffect(() => {
+        const fetchCounts = async () => {
+            const updatedCategories = await Promise.all(
+                initialCategories.map(async (cat) => {
+                    try {
+                        // Fetching with limit 1 just to get the total count from metadata
+                        const data = await getUpcomingEvents(cat.name, '', '', '', 'date', 1, 1);
+                        // The API structure returns { events: [...], totalEvents: number, ... }
+                        const count = data.totalEvents !== undefined ? data.totalEvents : 0;
+                        return { ...cat, events: count };
+                    } catch (error) {
+                        console.error(`Failed to fetch count for ${cat.name}`, error);
+                        return cat;
+                    }
+                })
+            );
+            setCategories(updatedCategories);
+        };
+
+        fetchCounts();
+    }, []);
+
     return (
         <section className="py-20 bg-base-200">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,8 +78,7 @@ export default function Categories() {
                         Explore Event Categories
                     </h2>
                     <p className="text-xl text-base-content/70 max-w-2xl mx-auto">
-                        Find events that match your interests and passion. Every category
-                        offers unique opportunities to make a difference.
+                        Find events that match your interests and passion.
                     </p>
                 </motion.div>
 
@@ -98,20 +91,20 @@ export default function Categories() {
                             transition={{ duration: 0.6, delay: index * 0.1 }}
                         >
                             <Link
-                                to={`/upcoming?type=${category.name.toLowerCase().replace(/\s+/g, '-')}`}
+                                to={`/upcoming?type=${category.name}`}
                                 className="block group"
                             >
-                                <div className="bg-base-100 p-6 rounded-2xl shadow-sm border border-base-content/5 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                                <div className="bg-base-100 p-6 rounded-2xl shadow-sm border border-base-content/5 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full">
                                     <div className={`inline-flex items-center justify-center w-14 h-14 bg-linear-to-br ${category.color} rounded-xl mb-4 group-hover:scale-110 transition`}>
                                         <category.icon className="w-7 h-7 text-white" />
                                     </div>
                                     <h3 className="font-bold text-xl text-base-content mb-2 group-hover:text-primary transition">
                                         {category.name}
                                     </h3>
-                                    <p className="text-base-content/70 mb-4 leading-relaxed">
+                                    <p className="text-base-content/70 mb-4 leading-relaxed line-clamp-2">
                                         {category.description}
                                     </p>
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex items-center justify-between mt-auto">
                                         <span className="text-sm font-medium text-primary">
                                             {category.events} events
                                         </span>
