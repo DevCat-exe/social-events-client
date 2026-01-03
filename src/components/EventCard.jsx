@@ -41,21 +41,21 @@ const EventCard = ({ event, index = 0, skeleton = false }) => {
                             className="w-full h-48 object-cover"
                         />
                     )}
-                    <div className="p-4 flex flex-col flex-grow">
+                    <div className="p-4 flex flex-col grow">
                         <h3 className="text-lg font-bold text-base-content mb-2 line-clamp-1">
                             {event.title}
                         </h3>
-                        <p className="text-base-content/70 text-sm mb-4 line-clamp-2 flex-grow">
+                        <p className="text-base-content/70 text-sm mb-4 line-clamp-2 grow">
                             {event.description}
                         </p>
 
                         <div className="space-y-2 text-sm text-base-content mt-auto">
                             <div className="flex items-center gap-2">
-                                <Calendar className="w-4 h-4 flex-shrink-0" />
+                                <Calendar className="w-4 h-4 shrink-0" />
                                 <span className="truncate">{new Date(event.eventDate).toLocaleDateString()}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <MapPin className="w-4 h-4 flex-shrink-0" />
+                                <MapPin className="w-4 h-4 shrink-0" />
                                 <span className="truncate">{event.location}</span>
                             </div>
                             <span className="inline-block bg-primary/20 text-primary px-3 py-1 rounded text-xs font-semibold w-fit">

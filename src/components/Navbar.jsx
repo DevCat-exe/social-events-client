@@ -14,6 +14,7 @@ import {
 import { useState, useRef, useEffect, useContext } from "react";
 import { AuthContext } from "../providers/AuthContext";
 import { useTheme } from "../providers/ThemeProvider";
+import { getUserProfile } from "../api/eventApi";
 import { motion, AnimatePresence } from "motion/react";
 
 export default function Navbar() {
@@ -24,6 +25,7 @@ export default function Navbar() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [profile, setProfile] = useState(null);
 
   const displayName = user?.displayName || user?.email?.split("@")[0] || "User";
   const photoURL = user?.photoURL;
@@ -42,6 +44,23 @@ export default function Navbar() {
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location]);
+
+  useEffect(() => {
+    if (user) {
+      fetchProfile();
+    } else {
+      setProfile(null);
+    }
+  }, [user]);
+
+  const fetchProfile = async () => {
+    try {
+      const data = await getUserProfile();
+      setProfile(data);
+    } catch (error) {
+      console.error("Failed to fetch profile:", error);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -117,11 +136,11 @@ export default function Navbar() {
                   className="flex items-center gap-2 p-1 pl-3 rounded-full bg-base-300/30 hover:bg-base-300/50 transition border border-base-content/5"
                 >
                   <div className="text-right hidden sm:block">
-                    <p className="text-xs font-bold leading-none">
+                    <p className="text-xs font-bold leading-none text-base-content">
                       {displayName}
                     </p>
-                    <p className="text-[10px] text-base-content/60 leading-tight">
-                      Member
+                    <p className="text-[10px] text-base-content/60 leading-tight capitalize">
+                      {profile?.role || 'Member'}
                     </p>
                   </div>
                   {photoURL ? (
@@ -136,7 +155,7 @@ export default function Navbar() {
                     </div>
                   )}
                   <ChevronDown
-                    className={`w-4 h-4 text-base-content/50 transition-transform ${showDropdown ? "rotate-180" : ""
+                    className={`w-4 h-4 text-base-content transition-transform ${showDropdown ? "rotate-180" : ""
                       }`}
                   />
                 </button>
@@ -153,7 +172,7 @@ export default function Navbar() {
                         <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-1">
                           Account
                         </p>
-                        <p className="text-sm font-bold truncate">
+                        <p className="text-sm font-bold truncate text-base-content">
                           {user.email}
                         </p>
                       </div>
@@ -167,7 +186,7 @@ export default function Navbar() {
                           <div className="p-2 bg-base-300/50 rounded-lg group-hover:bg-primary/20">
                             <User className="w-4 h-4" />
                           </div>
-                          <span className="text-sm font-medium">
+                          <span className="text-sm font-medium text-base-content">
                             My Profile
                           </span>
                         </Link>
@@ -179,7 +198,7 @@ export default function Navbar() {
                           <div className="p-2 bg-base-300/50 rounded-lg group-hover:bg-primary/20">
                             <Settings className="w-4 h-4" />
                           </div>
-                          <span className="text-sm font-medium">
+                          <span className="text-sm font-medium text-base-content">
                             Manage Events
                           </span>
                         </Link>
@@ -191,7 +210,7 @@ export default function Navbar() {
                           <div className="p-2 bg-base-300/50 rounded-lg group-hover:bg-primary/20">
                             <Heart className="w-4 h-4" />
                           </div>
-                          <span className="text-sm font-medium">
+                          <span className="text-sm font-medium text-base-content">
                             Joined Events
                           </span>
                         </Link>
@@ -203,7 +222,7 @@ export default function Navbar() {
                           <div className="p-2 bg-base-300/50 rounded-lg group-hover:bg-primary/20">
                             <LayoutDashboard className="w-4 h-4" />
                           </div>
-                          <span className="text-sm font-medium">
+                          <span className="text-sm font-medium text-base-content">
                             Dashboard
                           </span>
                         </Link>
@@ -215,7 +234,7 @@ export default function Navbar() {
                           <div className="p-2 bg-base-300/50 rounded-lg group-hover:bg-primary/20">
                             <Calendar className="w-4 h-4" />
                           </div>
-                          <span className="text-sm font-medium">
+                          <span className="text-sm font-medium text-base-content">
                             Create Event
                           </span>
                         </Link>
@@ -229,7 +248,7 @@ export default function Navbar() {
                           <div className="p-2 bg-error/5 rounded-lg group-hover:bg-error/20">
                             <LogOut className="w-4 h-4" />
                           </div>
-                          <span className="text-sm font-bold">Sign Out</span>
+                          <span className="text-sm font-bold text-base-content">Sign Out</span>
                         </button>
                       </div>
                     </motion.div>
@@ -240,7 +259,7 @@ export default function Navbar() {
               <div className="hidden sm:flex items-center gap-3">
                 <Link
                   to="/login"
-                  className="btn btn-ghost btn-sm text-sm font-bold tracking-wide"
+                  className="btn btn-ghost btn-sm text-sm font-bold tracking-wide text-base-content"
                 >
                   Login
                 </Link>

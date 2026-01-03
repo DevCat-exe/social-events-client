@@ -3,8 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Calendar, MapPin, User, FileText, Users } from "lucide-react";
 import { motion } from "motion/react";
 import { AuthContext } from "../providers/AuthContext";
-import { getEventById, joinEvent, getUpcomingEvents, getJoinedEvents } from "../api/eventApi";
-import EventCard from "../components/EventCard";
+import { getEventById, joinEvent, getUpcomingEvents, getJoinedEvents, getUserByEmail } from "../api/eventApi";
 import Swal from "sweetalert2";
 
 const EventDetails = () => {
@@ -16,6 +15,7 @@ const EventDetails = () => {
   const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
   const [hasJoined, setHasJoined] = useState(false);
+  const [creator, setCreator] = useState(null);
 
   useEffect(() => {
     fetchEvent();
@@ -28,6 +28,13 @@ const EventDetails = () => {
     try {
       const data = await getEventById(id);
       setEvent(data);
+      // Fetch creator info
+      try {
+        const creatorData = await getUserByEmail(data.creatorEmail);
+        setCreator(creatorData);
+      } catch (error) {
+        console.error("Failed to fetch creator:", error);
+      }
       // Fetch related events of same type
       if (data.eventType) {
         const related = await getUpcomingEvents(data.eventType, '', '', '', 'date', 1, 3);
@@ -69,6 +76,21 @@ const EventDetails = () => {
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, x: -20 },
+    show: { opacity: 1, x: 0 }
+  };
+
   if (loading)
     return <p className="text-center py-12 text-base-content">Loading...</p>;
   if (!event)
@@ -84,12 +106,14 @@ const EventDetails = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
+            className="mb-8 overflow-hidden rounded-lg shadow-lg"
           >
-            <img
+            <motion.img
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.5 }}
               src={event.thumbnail}
               alt={event.title}
-              className="w-full h-96 object-cover rounded-lg shadow-lg"
+              className="w-full h-96 object-cover"
             />
           </motion.div>
         )}
@@ -118,7 +142,17 @@ const EventDetails = () => {
                 </div>
                 <div className="flex items-center gap-3">
                   <User className="w-5 h-5 text-primary" />
-                  <span>{event.creatorEmail}</span>
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={creator?.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(creator?.displayName || event.creatorEmail)}&size=32`}
+                      alt={creator?.displayName || event.creatorEmail}
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                    <div>
+                      <span className="font-medium text-base-content">{creator?.displayName || event.creatorEmail}</span>
+                      <p className="text-sm text-base-content/70">{event.creatorEmail}</p>
+                    </div>
+                  </div>
                 </div>
                 <span className="inline-block bg-primary/20 text-primary px-3 py-1 rounded text-sm font-semibold">
                   {event.eventType}
@@ -149,7 +183,14 @@ const EventDetails = () => {
 
               <div className="flex gap-4">
                 {user ? (
-                  hasJoined ? (
+                  event.creatorEmail === user.email ? (
+                    <button
+                      disabled
+                      className="btn btn-neutral disabled:opacity-50 cursor-not-allowed"
+                    >
+                      Your Event
+                    </button>
+                  ) : hasJoined ? (
                     <button
                       disabled
                       className="btn btn-success disabled:opacity-50 cursor-not-allowed"
@@ -157,28 +198,34 @@ const EventDetails = () => {
                       Already Joined
                     </button>
                   ) : (
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                       onClick={handleJoin}
                       disabled={joining}
                       className="btn btn-primary disabled:opacity-50"
                     >
                       {joining ? "Joining..." : "Join Event"}
-                    </button>
+                    </motion.button>
                   )
                 ) : (
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => navigate("/login")}
                     className="btn btn-primary"
                   >
                     Login to Join
-                  </button>
+                  </motion.button>
                 )}
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => navigate("/upcoming")}
                   className="btn btn-neutral"
                 >
                   Back
-                </button>
+                </motion.button>
               </div>
             </motion.div>
           </div>
@@ -197,9 +244,18 @@ const EventDetails = () => {
                   <Users className="w-5 h-5" />
                   Related Events
                 </h3>
-                <div className="space-y-4">
+                <motion.div
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="show"
+                  className="space-y-4"
+                >
                   {relatedEvents.map((relatedEvent, idx) => (
-                    <div key={relatedEvent._id} className="border-b border-base-300 pb-4 last:border-b-0">
+                    <motion.div
+                      key={relatedEvent._id}
+                      variants={itemVariants}
+                      className="border-b border-base-300 pb-4 last:border-b-0"
+                    >
                       <h4 className="font-semibold text-base-content mb-2 line-clamp-1">
                         {relatedEvent.title}
                       </h4>
@@ -210,15 +266,17 @@ const EventDetails = () => {
                         <Calendar className="w-3 h-3" />
                         {new Date(relatedEvent.eventDate).toLocaleDateString()}
                       </div>
-                      <button
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => navigate(`/events/${relatedEvent._id}`)}
                         className="btn btn-sm btn-primary mt-2"
                       >
                         View Details
-                      </button>
-                    </div>
+                      </motion.button>
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               </motion.div>
             )}
           </div>

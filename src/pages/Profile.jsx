@@ -9,6 +9,7 @@ const Profile = () => {
   const { user } = useContext(AuthContext);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({
     displayName: '',
@@ -29,6 +30,7 @@ const Profile = () => {
       });
     } catch (error) {
       console.error('Failed to fetch profile:', error);
+      setError(true);
       Swal.fire("Error", "Failed to load profile", "error");
     } finally {
       setLoading(false);
@@ -73,6 +75,19 @@ const Profile = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-base-200 py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-base-content mb-4">Error</h1>
+            <p className="text-base-content/70">Failed to load profile. Please try again.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-base-200 py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -99,7 +114,7 @@ const Profile = () => {
           <div className="flex flex-col items-center mb-8">
             <div className="relative">
               <img
-                src={profile.photoURL || user?.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.displayName || user?.displayName || 'User')}&size=128`}
+                src={profile?.photoURL || user?.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.displayName || user?.displayName || 'User')}&size=128`}
                 alt="Profile"
                 className="w-32 h-32 rounded-full object-cover border-4 border-primary"
               />
@@ -110,16 +125,16 @@ const Profile = () => {
               )}
             </div>
             <h2 className="text-2xl font-bold text-base-content mt-4">
-              {profile.displayName || user?.displayName || 'User'}
+              {profile?.displayName || user?.displayName || 'User'}
             </h2>
-            <p className="text-base-content/70 capitalize">{profile.role}</p>
+            <p className="text-base-content/70 capitalize">{profile?.role}</p>
           </div>
 
           {/* Profile Information */}
           <div className="space-y-6">
             {/* Email */}
             <div className="flex items-center gap-4">
-              <Mail className="w-5 h-5 text-primary" />
+              <Mail className="w-5 h-5 text-base-content" />
               <div className="flex-1">
                 <label className="block text-sm font-medium text-base-content/70 mb-1">
                   Email
@@ -130,7 +145,7 @@ const Profile = () => {
 
             {/* Display Name */}
             <div className="flex items-center gap-4">
-              <User className="w-5 h-5 text-primary" />
+              <User className="w-5 h-5 text-base-content" />
               <div className="flex-1">
                 <label className="block text-sm font-medium text-base-content/70 mb-1">
                   Display Name
@@ -140,7 +155,7 @@ const Profile = () => {
                     type="text"
                     value={formData.displayName}
                     onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full text-base-content"
                     placeholder="Enter your display name"
                   />
                 ) : (
@@ -151,7 +166,7 @@ const Profile = () => {
 
             {/* Photo URL */}
             <div className="flex items-center gap-4">
-              <User className="w-5 h-5 text-primary" />
+              <User className="w-5 h-5 text-base-content" />
               <div className="flex-1">
                 <label className="block text-sm font-medium text-base-content/70 mb-1">
                   Profile Picture URL
@@ -161,7 +176,7 @@ const Profile = () => {
                     type="url"
                     value={formData.photoURL}
                     onChange={(e) => setFormData({ ...formData, photoURL: e.target.value })}
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full text-base-content"
                     placeholder="https://example.com/photo.jpg"
                   />
                 ) : (
@@ -172,7 +187,7 @@ const Profile = () => {
 
             {/* Join Date */}
             <div className="flex items-center gap-4">
-              <Calendar className="w-5 h-5 text-primary" />
+              <Calendar className="w-5 h-5 text-base-content" />
               <div className="flex-1">
                 <label className="block text-sm font-medium text-base-content/70 mb-1">
                   Member Since
@@ -185,7 +200,7 @@ const Profile = () => {
 
             {/* Last Login */}
             <div className="flex items-center gap-4">
-              <Calendar className="w-5 h-5 text-primary" />
+              <Calendar className="w-5 h-5 text-base-content" />
               <div className="flex-1">
                 <label className="block text-sm font-medium text-base-content/70 mb-1">
                   Last Login
@@ -225,30 +240,6 @@ const Profile = () => {
                 Edit Profile
               </button>
             )}
-          </div>
-        </motion.div>
-
-        {/* Account Statistics */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-8 bg-base-100 rounded-lg shadow-lg p-6"
-        >
-          <h3 className="text-xl font-semibold text-base-content mb-4">Account Statistics</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">12</div>
-              <div className="text-base-content/70">Events Joined</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-secondary mb-2">3</div>
-              <div className="text-base-content/70">Events Created</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-accent mb-2">98%</div>
-              <div className="text-base-content/70">Attendance Rate</div>
-            </div>
           </div>
         </motion.div>
       </div>

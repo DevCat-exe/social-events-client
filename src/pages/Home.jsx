@@ -7,11 +7,13 @@ import FAQ from "../components/home/FAQ";
 import CTA from "../components/home/CTA";
 import Gallery from "../components/home/Gallery";
 import Newsletter from "../components/home/Newsletter";
+import Partners from "../components/home/Partners";
 
 const Home = () => {
   return (
     <div>
       <Hero />
+      <Partners />
       <Features />
       <Statistics />
       <Testimonials />

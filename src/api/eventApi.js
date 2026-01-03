@@ -13,6 +13,16 @@ export const getUpcomingEvents = async (type = '', search = '', location = '', d
     }
 };
 
+// Get total events count
+export const getTotalEventsCount = async () => {
+    try {
+        const response = await axiosInstance.get('/events/count');
+        return response.data.total;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Failed to fetch total events count');
+    }
+};
+
 // Create a new event
 export const createEvent = async (eventData) => {
     try {
@@ -100,6 +110,36 @@ export const getAllUsers = async () => {
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || 'Failed to fetch users');
+    }
+};
+
+// Get user by email
+export const getUserByEmail = async (email) => {
+    try {
+        const response = await axiosInstance.get(`/users/email/${email}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Failed to fetch user');
+    }
+};
+
+// Update user role
+export const updateUserRole = async (email, role) => {
+    try {
+        const response = await axiosInstance.put(`/users/${email}/role`, { role });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Failed to update user role');
+    }
+};
+
+// Delete user
+export const deleteUser = async (email) => {
+    try {
+        const response = await axiosInstance.delete(`/users/${email}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Failed to delete user');
     }
 };
 
